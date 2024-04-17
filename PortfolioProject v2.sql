@@ -25,12 +25,13 @@ SELECT TOP (1000) [iso_code]
       ,[weekly_hosp_admissions]
       ,[weekly_hosp_admissions_per_million]
   FROM [PortofolioProject].[dbo].[CovidDeaths]
-  SE
 
+--Select Data to be used
   SELECT *
   FROM CovidDeaths
   WHERE continent IS NOT NULL;
 
+--Total Cases vs Total Deaths
   SELECT location, date, total_cases, new_cases, total_deaths , total_cases, population
   FROM CovidDeaths
   ORDER BY 1,2;
@@ -40,17 +41,20 @@ SELECT TOP (1000) [iso_code]
   WHERE location like '%South Africa%' AND continent IS NOT NULL;
   ORDER BY 1,2;
 
+--Total Cases vs Population
   SELECT location, date, total_cases, population , (total_cases/population)*100 as InfectionRate
   FROM CovidDeaths
   WHERE location like '%South Africa%' AND continent IS NOT NULL;
   ORDER BY 1,2;
 
+--Countries with Highest Infection Rates vs Population
   SELECT location, population, MAX(total_cases) as HighInfectCount, MAX((total_cases/population)*100) as PercentPopulationInfected
   FROM PortofolioProject..CovidDeaths
   WHERE continent IS NOT NULL
   GROUP BY location, population
   ORDER BY PercentPopulationInfected desc;
 
+--Countries with Highest Death Percentages vs Population
   SELECT location, population, MAX(CAST(total_deaths AS int)) as HighDeathCount, 
   MAX((total_deaths/population)*100) as PercentDeathsPopulation
   FROM PortofolioProject..CovidDeaths
@@ -65,7 +69,7 @@ SELECT TOP (1000) [iso_code]
   GROUP BY location
   ORDER BY TotalDeathCount desc;
 
-
+--Global numbers
   SELECT location, MAX(CAST(total_deaths AS INT)) AS TotalDeathCount
   FROM CovidDeaths
   WHERE continent IS NULL
@@ -81,6 +85,7 @@ SELECT TOP (1000) [iso_code]
   --GROUP BY date
   ORDER BY 1,2;
 
+--Using JOINS 
   SELECT Dea.continent, Dea.location, Dea.date, Dea.population,
   Vac.new_vaccinations, 
   SUM(CONVERT(int,Vac.new_vaccinations))
@@ -139,6 +144,7 @@ SELECT TOP (1000) [iso_code]
   SELECT *, (RollingPeopleVaccinated/population)*100 as PercentPopulationVaccinated
   FROM #PercentPeopleVaccinated
 
+-- Creating views
   Create View PercentPeopleVaccinated AS
   SELECT Dea.continent, Dea.location, Dea.date, Dea.population,
   Vac.new_vaccinations, 
